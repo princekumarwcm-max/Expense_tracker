@@ -8,3 +8,4 @@ bcrypt
 openpyxl
 altair
 numpy
+streamlit-option-menu
