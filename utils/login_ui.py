@@ -3,7 +3,6 @@ import bcrypt
 import time
 import json
 import os
-import pandas as pd
 from datetime import datetime, timedelta
 
 USER_DB_PATH = "users.json"
@@ -23,7 +22,7 @@ def save_users(users):
     with open(USER_DB_PATH, "w") as f:
         json.dump(users, f, indent=4)
 
-def render_login_page():
+def render_login_page(stored_hash=None):
     # Initialize lockout state
     if "failed_attempts" not in st.session_state:
         st.session_state["failed_attempts"] = 0
@@ -320,45 +319,3 @@ def render_login_page():
                             st.success("Account created successfully! You can now switch to the LOGIN tab to access your fresh dashboard.")
                             time.sleep(2)
                             st.rerun()
-
-def main():
-    # Initialize session state keys if they don't exist
-    if "authenticated" not in st.session_state:
-        st.session_state["authenticated"] = False
-
-    if not st.session_state["authenticated"]:
-        render_login_page()
-    else:
-        # ---- EXPENSE TRACKER DASHBOARD ----
-        st.title(f"💰 Expense Tracker – Welcome {st.session_state['user_email']}")
-
-        # Initialize dataframe if not present
-        if "live_df" not in st.session_state:
-            st.session_state["live_df"] = pd.DataFrame(columns=["Date", "Category", "Amount", "Note"])
-
-        # Add expense form
-        with st.form("expense_form"):
-            col1, col2 = st.columns(2)
-            with col1:
-                date = st.date_input("Date")
-                category = st.selectbox("Category", ["Food", "Transport", "Entertainment", "Bills", "Other"])
-            with col2:
-                amount = st.number_input("Amount (₹)", min_value=0.0, step=0.5)
-                note = st.text_input("Note")
-            submitted = st.form_submit_button("Add Expense")
-            if submitted and amount > 0:
-                new_row = pd.DataFrame([[date, category, amount, note]], columns=st.session_state["live_df"].columns)
-                st.session_state["live_df"] = pd.concat([st.session_state["live_df"], new_row], ignore_index=True)
-                st.success("Expense added!")
-
-        st.subheader("📊 Your Expenses")
-        st.dataframe(st.session_state["live_df"], use_container_width=True)
-
-        # Logout button
-        if st.button("🔓 Logout"):
-            st.session_state["authenticated"] = False
-            st.session_state.pop("user_email", None)
-            st.rerun()
-
-if __name__ == "__main__":
-    main()
