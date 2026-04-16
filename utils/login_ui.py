@@ -4,126 +4,89 @@ import json
 import os
 import time
 
-USER_DB_PATH = "users.json"
-VIDEO_URL = "app/static/active_bg.mp4"
+USER_DB = "users.json"
 
-# ---------- USER DB ----------
 def load_users():
-    if os.path.exists(USER_DB_PATH):
-        with open(USER_DB_PATH, "r") as f:
+    if os.path.exists(USER_DB):
+        with open(USER_DB, "r") as f:
             return json.load(f)
     return {}
 
-def save_users(users):
-    with open(USER_DB_PATH, "w") as f:
-        json.dump(users, f, indent=4)
+def save_users(data):
+    with open(USER_DB, "w") as f:
+        json.dump(data, f, indent=4)
 
-# ---------- UI ----------
-def render_login():
+def render_login_page():
 
-    st.markdown(f"""
+    st.markdown("""
     <style>
-    body {{
-        background-color: black;
-    }}
+    body {background:black;}
 
-    #bg-video {{
-        position: fixed;
-        right: 0;
-        bottom: 0;
-        min-width: 100%;
-        min-height: 100%;
-        z-index: -1;
-        filter: brightness(0.4);
-    }}
+    .title{
+        text-align:center;
+        font-size:55px;
+        font-weight:900;
+        color:#ff4d8d;
+        text-shadow:0 0 20px #ff4d8d;
+    }
 
-    .title {{
-        text-align: center;
-        font-size: 60px;
-        font-weight: 800;
-        color: #ff4d8d;
-    }}
-
-    .card {{
-        background: rgba(0,0,0,0.7);
-        padding: 30px;
-        border-radius: 20px;
-        border: 2px solid #ff4d8d;
-        box-shadow: 0 0 40px #ff4d8d;
-    }}
+    .box{
+        background:rgba(0,0,0,0.7);
+        padding:30px;
+        border-radius:20px;
+        border:2px solid #ff4d8d;
+        box-shadow:0 0 30px #ff4d8d;
+    }
     </style>
-
-    <video autoplay muted loop id="bg-video">
-        <source src="{VIDEO_URL}" type="video/mp4">
-    </video>
     """, unsafe_allow_html=True)
 
-    st.markdown("<div class='title'>EXPENSE TRACKER</div>", unsafe_allow_html=True)
+    st.markdown("<div class='title'>💸 EXPENSE TRACKER</div>", unsafe_allow_html=True)
 
-    tab1, tab2 = st.tabs(["🔒 Login", "📝 Register"])
+    tab1, tab2 = st.tabs(["🔐 LOGIN", "📝 REGISTER"])
 
-    # ---------- LOGIN ----------
+    # LOGIN
     with tab1:
-        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        st.markdown("<div class='box'>", unsafe_allow_html=True)
 
         email = st.text_input("Email")
         password = st.text_input("Password", type="password")
 
-        if st.button("Login"):
+        if st.button("LOGIN"):
             users = load_users()
 
-            # 🔥 Hard login
-            if email == "princekumar.wcm@gmail.com" and password == "admin123":
+            # demo login
+            if email == "admin@gmail.com" and password == "admin123":
                 st.session_state["auth"] = True
-                st.success("Login Success ✅")
-                time.sleep(1)
+                st.success("Login Success 🚀")
                 st.rerun()
 
             user = users.get(email)
-
             if user and bcrypt.checkpw(password.encode(), user["hashed_password"].encode()):
                 st.session_state["auth"] = True
-                st.success("Login Success ✅")
-                time.sleep(1)
+                st.success("Login Success 🚀")
                 st.rerun()
             else:
-                st.error("Invalid Credentials ❌")
+                st.error("Wrong Credentials ❌")
 
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # ---------- REGISTER ----------
+    # REGISTER
     with tab2:
-        st.markdown("<div class='card'>", unsafe_allow_html=True)
+        st.markdown("<div class='box'>", unsafe_allow_html=True)
 
         new_email = st.text_input("New Email")
         new_pass = st.text_input("New Password", type="password")
 
-        if st.button("Create Account"):
+        if st.button("REGISTER"):
             users = load_users()
 
             if new_email in users:
-                st.warning("User already exists")
+                st.warning("Already exists")
             else:
                 hashed = bcrypt.hashpw(new_pass.encode(), bcrypt.gensalt()).decode()
                 users[new_email] = {"hashed_password": hashed}
                 save_users(users)
-
-                st.success("Account Created ✅")
-                time.sleep(1)
+                st.success("Account created ✅")
                 st.rerun()
 
         st.markdown("</div>", unsafe_allow_html=True)
-
-# ---------- MAIN ----------
-def main():
-    if "auth" not in st.session_state:
-        st.session_state["auth"] = False
-
-    if not st.session_state["auth"]:
-        render_login()
-    else:
-        st.title("💸 Dashboard")
-        st.write("Ab yaha tumhara pura expense tracker chalega 🚀")
-
-if __name__ == "__main__":
-    main()
