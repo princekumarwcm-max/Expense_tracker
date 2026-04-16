@@ -9,3 +9,5 @@ openpyxl
 altair
 numpy
 streamlit-option-menu
+pytesseract
+Pillow
