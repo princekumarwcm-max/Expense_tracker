@@ -1,6 +1,7 @@
 # utils/ocr_utils.py
 import streamlit as st
 import pytesseract
+pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
 from PIL import Image
 import re
 import pandas as pd
