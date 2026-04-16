@@ -6,6 +6,7 @@ import os
 import utils.app as app
 from utils.alerts import start_background_scheduler
 from utils.alarm_system import password_gate, check_budget_alarm
+from utils.login_ui import render_login_page
 
 # -------------------------------
 # Streamlit Page Config
