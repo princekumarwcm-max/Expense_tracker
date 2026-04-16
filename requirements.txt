@@ -14,3 +14,5 @@ Pillow
 openai
 twilio
 apscheduler
+openai-whisper
+ffmpeg-python
