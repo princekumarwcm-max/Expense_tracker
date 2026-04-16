@@ -11,3 +11,4 @@ numpy
 streamlit-option-menu
 pytesseract
 Pillow
+openai
