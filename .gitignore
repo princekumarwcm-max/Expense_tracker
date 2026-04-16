@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+users.json
+sample_data/*.xlsx
+config/*.toml
+config/*.json
+.env
+.streamlit/secrets.toml
+static/26909-361107849.mp4
+26909-361107849 (1).mp4
